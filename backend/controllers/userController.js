@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (password != confirm_password) {
     res.status(400);
-    throw new Error("user already registered");
+    throw new Error("Confirm your password!");
   }
 
   const patient = await prisma.patient.findFirst({
@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (patient) {
     res.status(400);
-    throw new Error("Confirm your password!");
+    throw new Error("user already registered");
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -72,10 +72,11 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (newPatient) {
+    console.log(newPatient)
     res.json({
       _id: newPatient.id,
-      name: newUser.first_name + " " + newUser.last_name,
-      email: newPatient.email,
+      name,
+      email,
       token: generateToken(newPatient.id),
     });
   } else {
